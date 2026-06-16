@@ -20,9 +20,13 @@ paths:
               properties:
                 role:
                   type: string
+            examples:
+              interview_flow:
+                value:
+                  role: "Machine Learning Engineer"
 
       responses:
-        '200':
+        "200":
           description: Questions generated
           content:
             application/json:
@@ -33,6 +37,13 @@ paths:
                     type: array
                     items:
                       type: string
+              examples:
+                interview_flow:
+                  value:
+                    questions:
+                      - "What is supervised learning?"
+                      - "Explain overfitting."
+                      - "What is feature engineering?"
 
   /evaluate-answer:
     post:
@@ -52,9 +63,14 @@ paths:
                   type: string
                 answer:
                   type: string
+            examples:
+              answer_review:
+                value:
+                  question: "What is supervised learning?"
+                  answer: "A machine learning technique where models learn from labeled data."
 
       responses:
-        '200':
+        "200":
           description: Evaluation result
           content:
             application/json:
@@ -65,3 +81,8 @@ paths:
                     type: integer
                   feedback:
                     type: string
+              examples:
+                answer_review:
+                  value:
+                    score: 8
+                    feedback: "Good technical explanation."
