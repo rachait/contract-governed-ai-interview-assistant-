@@ -11,15 +11,12 @@ paths:
 
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
                 - role
-
               properties:
                 role:
                   type: string
@@ -27,15 +24,44 @@ paths:
       responses:
         '200':
           description: Questions generated
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   questions:
                     type: array
-
                     items:
                       type: string
+
+  /evaluate-answer:
+    post:
+      summary: Evaluate interview answer
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+                - answer
+              properties:
+                question:
+                  type: string
+                answer:
+                  type: string
+
+      responses:
+        '200':
+          description: Evaluation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  score:
+                    type: integer
+                  feedback:
+                    type: string
