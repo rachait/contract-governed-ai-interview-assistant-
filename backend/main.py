@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # Create FastAPI app
 app = FastAPI(
@@ -19,14 +19,39 @@ app.add_middleware(
 
 # Request Models
 class QuestionRequest(BaseModel):
-    role: str
+    role: str = Field(
+        min_length=2,
+        max_length=100
+    )
 
 class AnswerRequest(BaseModel):
-    question: str
-    answer: str
+    question: str = Field(
+        min_length=5
+    )
+
+    answer: str = Field(
+        min_length=10
+    )
+
+# Response Models
+class QuestionResponse(BaseModel):
+    questions: list[str]
+
+class EvaluationResponse(BaseModel):
+    score: int = Field(
+        ge=0,
+        le=10
+    )
+
+    feedback: str = Field(
+        min_length=5
+    )
 
 # Generate Interview Questions
-@app.post("/generate-questions")
+@app.post(
+    "/generate-questions",
+    response_model=QuestionResponse
+)
 def generate_questions(data: QuestionRequest):
     return {
         "questions": [
@@ -37,7 +62,10 @@ def generate_questions(data: QuestionRequest):
     }
 
 # Evaluate Candidate Answer
-@app.post("/evaluate-answer")
+@app.post(
+    "/evaluate-answer",
+    response_model=EvaluationResponse
+)
 def evaluate_answer(data: AnswerRequest):
     return {
         "score": 8,
