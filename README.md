@@ -220,20 +220,24 @@ docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise:latest test contra
 
 ### Results
 
-- Tests Run: 2
-- Successes: 2
+- Tests Run: 4
+- Successes: 4
 - Failures: 0
 - Errors: 0
 - API Coverage: 100%
 
 Covered Endpoints:
 
-- POST /generate-questions
-- POST /evaluate-answer
+- POST /generate-questions (200)
+- POST /generate-questions (422)
+- POST /evaluate-answer (200)
+- POST /evaluate-answer (422)
 
 ### Contract Test Report
 
 ![Contract Test Report](docs/images/contract-test-report.png)
+
+---
 
 ## Schema Resiliency Testing
 
@@ -241,12 +245,33 @@ Beyond standard contract testing, Specmatic was used to explore Schema Resilienc
 
 This feature automatically generates additional test combinations from the API schema and validates implementation behavior against them.
 
-### Baseline Testing
+### How to Toggle Schema Resiliency Tests
 
-Configuration:
+Configuration file:
+
+```text
+labs/schema-resiliency-testing/specmatic.yaml
+```
+
+Baseline:
 
 ```yaml
-schemaResiliencyTests: none
+test:
+  resiliencyTests: none
+```
+
+Positive Only:
+
+```yaml
+test:
+  resiliencyTests: positiveOnly
+```
+
+Full Resiliency Testing:
+
+```yaml
+test:
+  resiliencyTests: all
 ```
 
 Run:
@@ -254,6 +279,8 @@ Run:
 ```bash
 docker compose up --abort-on-container-exit
 ```
+
+### Baseline Testing
 
 Results:
 
@@ -265,18 +292,6 @@ Results:
 
 ### Positive-Only Testing
 
-Configuration:
-
-```yaml
-schemaResiliencyTests: positiveOnly
-```
-
-Run:
-
-```bash
-docker compose up --abort-on-container-exit
-```
-
 Results:
 
 - Tests run: 42
@@ -285,7 +300,7 @@ Results:
 
 ![Schema Resiliency Positive Only](docs/images/resiliency-positive-only.png)
 
-### Findings and Improvements
+## Findings and Improvements
 
 While exploring schema resiliency testing, I discovered that the original API contract was overly permissive.
 
@@ -295,6 +310,7 @@ Issues identified:
 - Missing response field requirements
 - Missing numeric range validation
 - Response schemas allowing unexpected properties
+- Contract defined validation failures as HTTP 400 while FastAPI returned HTTP 422
 
 Improvements applied:
 
@@ -305,6 +321,8 @@ Improvements applied:
 - Added required response fields
 - Added `additionalProperties: false`
 - Added stronger FastAPI validation using Pydantic Field constraints
+- Updated OpenAPI contract to accurately document HTTP 422 validation responses
+- Added matching request and response examples
 
 These improvements make the contract more robust and self-documenting.
 
@@ -313,7 +331,7 @@ These improvements make the contract more robust and self-documenting.
 ## API Coverage
 
 | Endpoint | Method | Coverage |
-|-----------|----------|----------|
+|----------|---------|----------|
 | /generate-questions | POST | 100% |
 | /evaluate-answer | POST | 100% |
 
@@ -377,6 +395,7 @@ The CI pipeline performs:
 - OpenAPI Validation
 - Example Validation
 - Contract Testing
+- Schema Resiliency Testing
 - Contract Compliance Verification
 
 ### GitHub Actions Workflow
@@ -395,14 +414,24 @@ Initial validation reported warnings because request examples did not have match
 
 Added corresponding request and response examples in the OpenAPI specification.
 
-### Contract Validation Improvements
+### Validation Response Mismatch
 
-Specification validation helped verify:
+Specmatic identified a mismatch between the OpenAPI contract and FastAPI implementation.
 
-- Request schemas
-- Response schemas
-- Required fields
-- Example correctness
+The contract initially documented validation failures as HTTP 400 responses.
+
+FastAPI and Pydantic automatically returned HTTP 422 responses for schema validation failures.
+
+#### Fix
+
+- Updated the OpenAPI contract to document HTTP 422 responses
+- Added request and response validation examples
+- Re-ran contract validation and testing
+
+#### Result
+
+- Coverage improved from 50% to 100%
+- All contract tests passed successfully
 
 ### Schema Validation Findings
 
@@ -444,7 +473,6 @@ Instead, Specmatic helped uncover real specification, validation, and integratio
 - Persistent interview history
 - User authentication
 - Interview analytics dashboard
-- CI integration for schema resiliency testing
 - Advanced scoring and recommendations
 
 ---
