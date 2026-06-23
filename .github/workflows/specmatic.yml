@@ -44,3 +44,15 @@ jobs:
             specmatic/enterprise:latest \
             test contracts/interview-api.yaml \
             --testBaseURL=http://localhost:8000
+
+  schema-resiliency-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Schema Resiliency Tests
+        working-directory: labs/schema-resiliency-testing
+        run: |
+          docker compose up --abort-on-container-exit
