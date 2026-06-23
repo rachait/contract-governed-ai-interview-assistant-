@@ -226,16 +226,24 @@ docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise:latest test contra
 - Errors: 0
 - API Coverage: 100%
 
-Covered Endpoints:
+Covered Scenarios:
 
-- POST /generate-questions (200)
-- POST /generate-questions (422)
-- POST /evaluate-answer (200)
-- POST /evaluate-answer (422)
+- POST /generate-questions → 200
+- POST /generate-questions → 422
+- POST /evaluate-answer → 200
+- POST /evaluate-answer → 422
 
 ### Contract Test Report
 
 ![Contract Test Report](docs/images/contract-test-report.png)
+
+### Final Contract Test Results
+
+![Contract Test Success](docs/images/contract-test-success.png)
+
+### API Coverage Report
+
+![API Coverage](docs/images/api-coverage-100.png)
 
 ---
 
@@ -398,6 +406,8 @@ The CI pipeline performs:
 - Schema Resiliency Testing
 - Contract Compliance Verification
 
+This ensures both API correctness and schema robustness are automatically verified on every push and pull request.
+
 ### GitHub Actions Workflow
 
 ![GitHub Actions](docs/images/github-actions-success.png)
@@ -414,24 +424,30 @@ Initial validation reported warnings because request examples did not have match
 
 Added corresponding request and response examples in the OpenAPI specification.
 
+---
+
 ### Validation Response Mismatch
 
-Specmatic identified a mismatch between the OpenAPI contract and FastAPI implementation.
+One of the most valuable findings came from Specmatic contract testing.
 
-The contract initially documented validation failures as HTTP 400 responses.
+The OpenAPI contract initially documented validation failures as HTTP 400 responses. However, FastAPI and Pydantic automatically returned HTTP 422 (Unprocessable Entity) responses for schema validation failures.
 
-FastAPI and Pydantic automatically returned HTTP 422 responses for schema validation failures.
+Specmatic immediately detected this mismatch during contract testing.
 
 #### Fix
 
-- Updated the OpenAPI contract to document HTTP 422 responses
-- Added request and response validation examples
-- Re-ran contract validation and testing
+- Updated the OpenAPI contract to document HTTP 422 responses.
+- Added matching request and response examples.
+- Added stronger validation constraints.
+- Re-ran validation and contract tests.
 
 #### Result
 
-- Coverage improved from 50% to 100%
-- All contract tests passed successfully
+- Coverage increased from 50% to 100%.
+- All 4 contract scenarios passed successfully.
+- The OpenAPI contract now accurately reflects implementation behavior.
+
+---
 
 ### Schema Validation Findings
 
@@ -444,6 +460,8 @@ Schema resiliency analysis highlighted weaknesses in the original contract and m
 - Added numeric validation (`minimum` and `maximum`)
 - Added `additionalProperties: false`
 - Updated FastAPI request validation using Pydantic `Field`
+
+---
 
 ### Key Takeaway
 
