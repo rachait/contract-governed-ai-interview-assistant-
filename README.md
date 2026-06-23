@@ -2,6 +2,7 @@
 
 ## Overview
 
+
 This project demonstrates how executable API contracts improve reliability, reduce integration uncertainty, and act as guardrails for AI-assisted software development.
 
 The application is a full-stack AI Interview Assistant built using:
