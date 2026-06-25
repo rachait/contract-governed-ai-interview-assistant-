@@ -2,7 +2,6 @@
 
 ## Overview
 
-
 This project demonstrates how executable API contracts improve reliability, reduce integration uncertainty, and act as guardrails for AI-assisted software development.
 
 The application is a full-stack AI Interview Assistant built using:
@@ -10,13 +9,13 @@ The application is a full-stack AI Interview Assistant built using:
 - React (Frontend)
 - FastAPI (Backend)
 - OpenAPI (API Contract)
-- Specmatic (Contract Testing, Validation, Service Virtualization, and Schema Resiliency Testing)
+- Specmatic (Contract Validation, Contract Testing, Service Virtualization, API Coverage, and Governance)
 
-The OpenAPI contract serves as the single source of truth for both frontend and backend development.
+The OpenAPI contract serves as the single source of truth for frontend and backend development.
 
 ---
 
-## Problem Statement
+# Problem Statement
 
 AI coding assistants can generate working code rapidly, but they can also introduce implementation drift from agreed API contracts.
 
@@ -32,7 +31,7 @@ Without executable contracts, these issues are often detected only during integr
 
 ---
 
-## Solution
+# Solution
 
 This project follows a Contract-First Development approach.
 
@@ -40,17 +39,23 @@ The API is defined using OpenAPI and treated as the source of truth.
 
 Specmatic is used to:
 
-- Generate executable mocks from the contract
+- Validate the OpenAPI specification
+- Generate executable mock services
 - Enable frontend development before backend completion
-- Validate implementation behavior against the contract
-- Detect contract violations before integration testing
+- Verify backend implementation against the contract
 - Generate API coverage reports
-- Perform schema resiliency testing
-- Act as guardrails for API quality
+- Produce HTML and CTRF reports
+- Improve API robustness through stronger schema validation
 
 ---
 
-## Architecture
+# Architecture
+
+The OpenAPI contract acts as the single source of truth for both frontend and backend development.
+
+Instead of treating documentation as an afterthought, the contract drives implementation, validation, testing, and integration.
+
+![Architecture](docs/images/project-structure.png)
 
 ```text
 React Frontend
@@ -69,29 +74,69 @@ Specmatic Mock      Contract Validation
           FastAPI Backend
 ```
 
-The OpenAPI specification acts as the single source of truth and drives development, testing, validation, and integration.
-
 ---
 
-## Project Structure
+# Project Structure
 
 ![Project Structure](docs/images/project-structure.png)
 
+```text
+contract-governed-ai-interview-assistant
+│
+├── backend
+├── frontend
+├── contracts
+│   └── interview-api.yaml
+│
+├── docs
+│
+├── .github
+│   └── workflows
+│       └── specmatic.yml
+│
+├── specmatic.yaml
+│
+└── README.md
+```
+
 ---
 
-## API Contract
+# Specmatic Configuration
 
-Location:
+The project includes a **Specmatic configuration file** located at the repository root.
+
+```text
+specmatic.yaml
+```
+
+The configuration defines:
+
+- OpenAPI contract source
+- System Under Test (FastAPI backend)
+- HTML report generation
+- CTRF report generation
+
+The OpenAPI contract used by Specmatic is located at:
 
 ```text
 contracts/interview-api.yaml
 ```
 
-### Generate Interview Questions
+---
 
-**POST /generate-questions**
+# API Contract
 
-Request:
+Location
+
+```text
+contracts/interview-api.yaml
+```
+
+## Generate Interview Questions
+
+POST `/generate-questions`
+
+Request
 
 ```json
 {
@@ -99,7 +144,7 @@ Request:
 }
 ```
 
-Response:
+Response
 
 ```json
 {
@@ -111,11 +156,13 @@ Response:
 }
 ```
 
-### Evaluate Answer
+---
 
-**POST /evaluate-answer**
+## Evaluate Answer
 
-Request:
+POST `/evaluate-answer`
+
+Request
 
 ```json
 {
@@ -124,7 +171,7 @@ Request:
 }
 ```
 
-Response:
+Response
 
 ```json
 {
@@ -135,7 +182,7 @@ Response:
 
 ---
 
-## Running the Backend
+# Running the Backend
 
 ```bash
 cd backend
@@ -143,19 +190,17 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-Swagger UI:
+Swagger UI
 
 ```text
 http://localhost:8000/docs
 ```
 
-### Backend Running
-
 ![Backend Running](docs/images/backend-running.png)
 
 ---
 
-## Running the Frontend
+# Running the Frontend
 
 ```bash
 cd frontend
@@ -163,351 +208,200 @@ npm install
 npm start
 ```
 
-Application:
+Application
 
 ```text
 http://localhost:3000
 ```
 
-### React Application
-
 ![React Application](docs/images/react-app-working.png)
 
 ---
 
-## OpenAPI Contract Validation
+# OpenAPI Contract Validation
 
-Validate the specification:
+Validate the specification
 
 ```bash
-docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise:latest validate --spec-file=contracts/interview-api.yaml
+docker run --rm \
+-v "${PWD}:/usr/src/app" \
+specmatic/enterprise:latest \
+validate \
+--spec-file=contracts/interview-api.yaml
 ```
 
-### Validation Results
+Validation confirms:
 
-- OpenAPI Specification: Valid
-- API Paths: 2
-- API Operations: 2
-- Example Validation: Passed
+- OpenAPI Specification
+- Request Schemas
+- Response Schemas
+- Inline Examples
+- Global Example Validation
 
-### Specification Validation
+# Contract Testing
 
-![Specification Validation](docs/images/spec-validation.png)
-
-### Example Validation
-
-![Example Validation](docs/images/spec-validation-examples.png)
-
----
-
-## Contract Testing
-
-Start FastAPI:
+Start the FastAPI backend:
 
 ```bash
 cd backend
 uvicorn main:app --reload
 ```
 
-Run contract tests:
+Run Specmatic contract tests:
 
 ```bash
-docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise:latest test contracts/interview-api.yaml --testBaseURL=http://host.docker.internal:8000
+docker run --rm \
+-v "${PWD}:/usr/src/app" \
+specmatic/enterprise:latest \
+test contracts/interview-api.yaml \
+--testBaseURL=http://host.docker.internal:8000
 ```
 
-### Contract Test Execution
+## Contract Test Execution
 
 ![Contract Test Execution](docs/images/contract-test-execution.png)
 
+---
+
+## Contract Test Results
+
+The backend implementation was validated against the OpenAPI contract using Specmatic.
+
 ### Results
 
-- Tests Run: 4
-- Successes: 4
-- Failures: 0
-- Errors: 0
-- API Coverage: 100%
+- Tests Run: **4**
+- Successes: **4**
+- Failures: **0**
+- Errors: **0**
+- API Coverage: **100%**
 
 Covered Scenarios:
 
-- POST /generate-questions → 200
-- POST /generate-questions → 422
-- POST /evaluate-answer → 200
-- POST /evaluate-answer → 422
+- POST `/generate-questions` → **200**
+- POST `/generate-questions` → **422**
+- POST `/evaluate-answer` → **200**
+- POST `/evaluate-answer` → **422**
 
-### Contract Test Report
-
-![Contract Test Report](docs/images/contract-test-report.png)
-
-### Final Contract Test Results
-
-![Contract Test Success](docs/images/contract-test-success.png)
-
-### API Coverage Report
-
-![API Coverage](docs/images/api-coverage-100.png)
+All contract scenarios passed successfully.
 
 ---
 
-## Schema Resiliency Testing
+## Contract Test Report
 
-Beyond standard contract testing, Specmatic was used to explore Schema Resiliency Testing.
+![Contract Test Report](docs/images/contract-test-report.png)
 
-This feature automatically generates additional test combinations from the API schema and validates implementation behavior against them.
+---
 
-### How to Toggle Schema Resiliency Tests
+## Final Contract Test Results
 
-Configuration file:
-
-```text
-labs/schema-resiliency-testing/specmatic.yaml
-```
-
-Baseline:
-
-```yaml
-test:
-  resiliencyTests: none
-```
-
-Positive Only:
-
-```yaml
-test:
-  resiliencyTests: positiveOnly
-```
-
-Full Resiliency Testing:
-
-```yaml
-test:
-  resiliencyTests: all
-```
-
-Run:
-
-```bash
-docker compose up --abort-on-container-exit
-```
-
-### Baseline Testing
-
-Results:
-
-- Tests run: 3
-- Successes: 3
-- Failures: 0
-
-![Schema Resiliency Baseline](docs/images/resiliency-baseline.png)
-
-### Positive-Only Testing
-
-Results:
-
-- Tests run: 42
-- Successes: 42
-- Failures: 0
-
-![Schema Resiliency Positive Only](docs/images/resiliency-positive-only.png)
-
-## Findings and Improvements
-
-While exploring schema resiliency testing, I discovered that the original API contract was overly permissive.
-
-Issues identified:
-
-- Missing minimum string length constraints
-- Missing response field requirements
-- Missing numeric range validation
-- Response schemas allowing unexpected properties
-- Contract defined validation failures as HTTP 400 while FastAPI returned HTTP 422
-
-Improvements applied:
-
-- Added `minLength`
-- Added `maxLength`
-- Added `minimum`
-- Added `maximum`
-- Added required response fields
-- Added `additionalProperties: false`
-- Added stronger FastAPI validation using Pydantic Field constraints
-- Updated OpenAPI contract to accurately document HTTP 422 validation responses
-- Added matching request and response examples
-
-These improvements make the contract more robust and self-documenting.
+![Contract Test Success](docs/images/contract-test-success.png)
 
 ---
 
 ## API Coverage
 
+![API Coverage](docs/images/api-coverage-100.png)
+
+Specmatic reported **100% API Coverage**, confirming that every operation defined in the OpenAPI contract was exercised during contract testing.
+
 | Endpoint | Method | Coverage |
-|----------|---------|----------|
+|----------|--------|----------|
 | /generate-questions | POST | 100% |
 | /evaluate-answer | POST | 100% |
 
-### Overall Coverage
-
-**100% API Coverage**
-
-This confirms that every operation defined in the OpenAPI specification has been exercised through contract testing.
-
 ---
 
-## Generated Reports
+# Generated Reports
 
-Generated artifacts:
+Specmatic automatically generated the following reports after successful execution:
 
 ```text
-build/reports/specmatic/test/ctrf/ctrf-report.json
 build/reports/specmatic/test/html/index.html
+
+build/reports/specmatic/test/ctrf/ctrf-report.json
 ```
 
-Generated report types:
+Generated report formats:
 
-- CTRF Report
 - HTML Report
+- CTRF Report
+
+These reports provide API coverage information, executed scenarios, and test summaries.
 
 ---
 
-## Service Virtualization with Specmatic
+# Service Virtualization
 
-Specmatic generates executable mocks directly from the OpenAPI contract.
+Specmatic can generate executable mock services directly from the OpenAPI contract.
 
-Start Mock Server:
+Run the mock server:
 
 ```bash
-docker run --rm -p 8000:8000 -v "${PWD}:/usr/src/app" specmatic/enterprise:latest mock contracts/interview-api.yaml --port 8000
+docker run --rm \
+-p 8000:8000 \
+-v "${PWD}:/usr/src/app" \
+specmatic/enterprise:latest \
+mock contracts/interview-api.yaml \
+--port 8000
 ```
 
 Benefits:
 
-- Frontend development without backend dependency
-- Faster parallel development
+- Independent frontend development
+- Parallel frontend and backend implementation
+- Faster development cycle
+- Consistent API behaviour
 - Reduced integration bottlenecks
-- Consistent API behavior across teams
 
-The React frontend was developed and tested independently using the generated mock service before backend completion.
-
----
-
-## Continuous Integration
-
-Contract validation has been automated using GitHub Actions.
-
-Workflow Location:
-
-```text
-.github/workflows/specmatic.yml
-```
-
-The CI pipeline performs:
-
-- OpenAPI Validation
-- Example Validation
-- Contract Testing
-- Schema Resiliency Testing
-- Contract Compliance Verification
-
-This ensures both API correctness and schema robustness are automatically verified on every push and pull request.
-
-### GitHub Actions Workflow
-
-![GitHub Actions](docs/images/github-actions-success.png)
+The React frontend was developed and tested against the generated mock before backend completion.
 
 ---
 
-## Issues Identified and Fixed Using Specmatic
+# Validation Improvements
 
-### Missing Example Pairings
+While validating the API using Specmatic, several opportunities to strengthen the contract were identified.
 
-Initial validation reported warnings because request examples did not have matching response examples.
+The original contract was intentionally simple and focused on functionality.
 
-#### Fix
+After validation, the contract was enhanced by introducing stronger schema constraints.
 
-Added corresponding request and response examples in the OpenAPI specification.
+Improvements included:
+
+- Added `minLength`
+- Added `maxLength`
+- Added `minimum`
+- Added `maximum`
+- Added required response properties
+- Added `additionalProperties: false`
+
+These improvements make the API contract more explicit, easier to validate, and more resilient.
 
 ---
 
-### Validation Response Mismatch
+# Validation Response Mismatch
 
-One of the most valuable findings came from Specmatic contract testing.
+One of the most useful findings came from contract testing.
 
-The OpenAPI contract initially documented validation failures as HTTP 400 responses. However, FastAPI and Pydantic automatically returned HTTP 422 (Unprocessable Entity) responses for schema validation failures.
+Initially, the OpenAPI contract documented validation failures as **HTTP 400** responses.
+
+However, FastAPI (through Pydantic) automatically returned **HTTP 422 – Unprocessable Entity** whenever request validation failed.
+
+Although the backend worked correctly, the implementation no longer matched the API contract.
 
 Specmatic immediately detected this mismatch during contract testing.
 
-#### Fix
+### Fix Applied
 
-- Updated the OpenAPI contract to document HTTP 422 responses.
+- Updated the OpenAPI contract to document HTTP **422** responses.
 - Added matching request and response examples.
-- Added stronger validation constraints.
-- Re-ran validation and contract tests.
+- Updated validation constraints.
+- Re-ran contract validation.
 
-#### Result
+### Result
 
-- Coverage increased from 50% to 100%.
-- All 4 contract scenarios passed successfully.
-- The OpenAPI contract now accurately reflects implementation behavior.
+- Coverage increased from **50%** to **100%**.
+- All four contract scenarios passed successfully.
+- The contract accurately reflects implementation behaviour.
+![Specification Validation](docs/images/spec-validation.png)
 
----
-
-### Schema Validation Findings
-
-Schema resiliency analysis highlighted weaknesses in the original contract and motivated stronger schema constraints and validation rules.
-
-#### Improvements Applied
-
-- Added `minLength` and `maxLength` constraints
-- Added required response fields
-- Added numeric validation (`minimum` and `maximum`)
-- Added `additionalProperties: false`
-- Updated FastAPI request validation using Pydantic `Field`
-
----
-
-### Key Takeaway
-
-The most valuable aspect of executable contracts was not intentionally introducing failures.
-
-Instead, Specmatic helped uncover real specification, validation, and integration issues early in development before they could become production problems.
-
----
-
-## Key Learnings
-
-- Executable contracts reduce integration uncertainty.
-- API contracts provide clear boundaries between services.
-- Service virtualization enables independent frontend and backend development.
-- Contract-first development catches issues earlier.
-- Schema resiliency testing increases confidence in API robustness.
-- OpenAPI examples improve test quality and documentation.
-- Automated validation improves confidence in API behavior.
-- Specmatic acts as a practical guardrail for API development.
-
----
-
-## Future Improvements
-
-- Gemini/OpenAI-powered interview question generation
-- AI-powered answer evaluation
-- Persistent interview history
-- User authentication
-- Interview analytics dashboard
-- Advanced scoring and recommendations
-
----
-
-## Author
-
-**Rachait Talwar**
-
-Submission for the **Specmatic Full Stack AI Engineering Intern / Trainee Challenge**.
-
-Built to demonstrate how executable contracts improve API quality through:
-
-- Contract Validation
-- Example Validation
-- Service Virtualization
-- Contract Testing
-- Schema Resiliency Testing
-- API Coverage Reporting
-- CI Automation
+![Example Validation](docs/images/spec-validation-examples.png)
