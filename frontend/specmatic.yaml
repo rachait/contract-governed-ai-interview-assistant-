@@ -1,0 +1,28 @@
+version: 3
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: ./contracts
+          specs:
+            - interview-api.yaml
+
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: http://localhost:8000
+
+specmatic:
+  governance:
+    report:
+      formats:
+        - ctrf
+        - html
+      outputDirectory: build/reports/specmatic
+
+    successCriteria:
+      enforce: true
+      minCoveragePercentage: 100
