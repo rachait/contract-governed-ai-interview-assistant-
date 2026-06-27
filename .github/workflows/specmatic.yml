@@ -1,73 +1,161 @@
 name: Specmatic Contract Tests
 
+
+
 on:
+
   push:
+
     branches:
+
       - main
+
   pull_request:
 
+
+
 jobs:
+
   contract-test:
+
     runs-on: ubuntu-latest
 
+
+
     steps:
+
       - name: Checkout Repository
+
         uses: actions/checkout@v4
 
+
+
       - name: Setup Python
+
         uses: actions/setup-python@v5
+
         with:
+
           python-version: "3.11"
 
+
+
       - name: Install Backend Dependencies
+
         run: |
+
           cd backend
+
           pip install -r requirements.txt
 
+
+
       - name: Start FastAPI Backend
+
         run: |
+
           cd backend
+
           nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
+
           sleep 15
 
+
+
       - name: Validate OpenAPI Contract
+
         run: |
+
           docker run --rm \
+
             -v ${{ github.workspace }}:/usr/src/app \
+
             specmatic/enterprise:latest \
+
             validate \
-            --spec-file=contracts/interview-api.yaml
+
+            --spec-file contracts/interview-api.yaml
+
+
 
       - name: Export External Examples
+
         run: |
+
           docker run --rm \
+
             -v ${{ github.workspace }}:/usr/src/app \
+
             specmatic/enterprise:latest \
+
             examples export \
+
             --spec-file contracts/interview-api.yaml
+
+
+
+      - name: Validate External Examples
+
+        run: |
+
+          docker run --rm \
+
+            -v ${{ github.workspace }}:/usr/src/app \
+
+            specmatic/enterprise:latest \
+
+            examples validate \
+
+            --spec-file contracts/interview-api.yaml
+
+
 
       - name: Generate Example Dictionary
+
         run: |
+
           docker run --rm \
+
             -v ${{ github.workspace }}:/usr/src/app \
+
             specmatic/enterprise:latest \
+
             examples dictionary \
+
             --spec-file contracts/interview-api.yaml
 
+
+
       - name: Run Specmatic Contract Tests
+
         run: |
+
           docker run --network host --rm \
+
             -v ${{ github.workspace }}:/usr/src/app \
+
             specmatic/enterprise:latest \
+
             test contracts/interview-api.yaml \
+
             --testBaseURL=http://localhost:8000
 
+
+
       - name: Upload Specmatic Reports
+
         if: always()
+
         uses: actions/upload-artifact@v4
+
         with:
+
           name: specmatic-reports
+
           path: |
+
             build/reports/specmatic/**
+
             contracts/interview-api_examples/**
+
             contracts/interview-api_dictionary.yaml
