@@ -1,0 +1,26 @@
+{
+    "http-request": {
+        "path": "/generate-questions",
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {
+            "role": "Machine Learning Engineer"
+        }
+    },
+    "http-response": {
+        "status": 200,
+        "body": {
+            "questions": [
+                "What is supervised learning?",
+                "Explain overfitting.",
+                "What is feature engineering?"
+            ]
+        },
+        "status-text": "OK",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

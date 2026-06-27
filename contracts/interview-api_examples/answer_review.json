@@ -1,0 +1,24 @@
+{
+    "http-request": {
+        "path": "/evaluate-answer",
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {
+            "question": "What is supervised learning?",
+            "answer": "A machine learning technique where models learn from labeled data."
+        }
+    },
+    "http-response": {
+        "status": 200,
+        "body": {
+            "score": 8,
+            "feedback": "Good technical explanation with relevant examples."
+        },
+        "status-text": "OK",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

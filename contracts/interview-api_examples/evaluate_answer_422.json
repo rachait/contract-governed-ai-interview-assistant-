@@ -1,0 +1,16 @@
+{
+  "http-request": {
+    "method": "POST",
+    "path": "/evaluate-answer",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "question": "",
+      "answer": ""
+    }
+  },
+  "http-response": {
+    "status": 422
+  }
+}

@@ -1,0 +1,35 @@
+{
+    "http-request": {
+        "path": "/generate-questions",
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {
+            "role": ""
+        }
+    },
+    "http-response": {
+        "status": 422,
+        "body": {
+            "detail": [
+                {
+                    "type": "string_too_short",
+                    "loc": [
+                        "body",
+                        "role"
+                    ],
+                    "msg": "String should have at least 2 characters",
+                    "input": "",
+                    "ctx": {
+                        "min_length": 2
+                    }
+                }
+            ]
+        },
+        "status-text": "Unprocessable Entity",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

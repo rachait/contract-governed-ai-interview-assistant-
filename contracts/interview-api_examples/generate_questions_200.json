@@ -1,0 +1,15 @@
+{
+  "http-request": {
+    "method": "POST",
+    "path": "/generate-questions",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "role": "Machine Learning Engineer"
+    }
+  },
+  "http-response": {
+    "status": 200
+  }
+}

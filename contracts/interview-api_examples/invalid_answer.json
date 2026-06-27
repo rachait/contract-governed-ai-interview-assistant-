@@ -1,0 +1,36 @@
+{
+    "http-request": {
+        "path": "/evaluate-answer",
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {
+            "question": "What is supervised learning?",
+            "answer": ""
+        }
+    },
+    "http-response": {
+        "status": 422,
+        "body": {
+            "detail": [
+                {
+                    "type": "string_too_short",
+                    "loc": [
+                        "body",
+                        "answer"
+                    ],
+                    "msg": "String should have at least 10 characters",
+                    "input": "",
+                    "ctx": {
+                        "min_length": 10
+                    }
+                }
+            ]
+        },
+        "status-text": "Unprocessable Entity",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }
+}

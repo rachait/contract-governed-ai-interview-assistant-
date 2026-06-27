@@ -1,0 +1,16 @@
+'*':
+  role:
+  - Machine Learning Engineer
+  questions:
+  - - What is supervised learning?
+    - Explain overfitting.
+    - What is feature engineering?
+  question:
+  - What is supervised learning?
+  answer:
+  - A machine learning technique where models learn from labeled data.
+  - It is a machine learning technique where models learn from labelled data.
+  score:
+  - 8
+  feedback:
+  - Good technical explanation with relevant examples.
