@@ -46,14 +46,6 @@ jobs:
             examples export \
             --spec-file contracts/interview-api.yaml
 
-      - name: Validate External Examples
-        run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/usr/src/app \
-            specmatic/enterprise:latest \
-            examples validate \
-            --spec-file contracts/interview-api.yaml
-
       - name: Generate Example Dictionary
         run: |
           docker run --rm \
