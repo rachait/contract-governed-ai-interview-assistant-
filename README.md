@@ -113,7 +113,6 @@ The OpenAPI contract sits at the center of the application architecture.
 
 Instead of treating documentation as an afterthought, the contract drives implementation, validation, testing, and integration.
 
-![Architecture](docs/images/architecture.png)
 
 ```text
                 React Frontend
@@ -514,6 +513,5 @@ Advantages:
 
 The React frontend was successfully developed and tested using Specmatic-generated mock APIs before the FastAPI implementation was finalized.
 
-![Mock Server](docs/images/specmatic-mock.png)
 
 ---
