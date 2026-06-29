@@ -25,15 +25,6 @@ paths:
                   minLength: 2
                   maxLength: 100
 
-            examples:
-              interview_flow:
-                value:
-                  role: "Machine Learning Engineer"
-
-              invalid_role:
-                value:
-                  role: ""
-
       responses:
         "200":
           description: Questions generated successfully
@@ -52,14 +43,6 @@ paths:
                       type: string
                       minLength: 5
 
-              examples:
-                interview_flow:
-                  value:
-                    questions:
-                      - "What is supervised learning?"
-                      - "Explain overfitting."
-                      - "What is feature engineering?"
-
         "422":
           description: Validation error
           content:
@@ -73,19 +56,6 @@ paths:
                     type: array
                     items:
                       type: object
-
-              examples:
-                invalid_role:
-                  value:
-                    detail:
-                      - type: "string_too_short"
-                        loc:
-                          - body
-                          - role
-                        msg: "String should have at least 2 characters"
-                        input: ""
-                        ctx:
-                          min_length: 2
 
   /evaluate-answer:
     post:
@@ -110,17 +80,6 @@ paths:
                   type: string
                   minLength: 10
 
-            examples:
-              answer_review:
-                value:
-                  question: "What is supervised learning?"
-                  answer: "A machine learning technique where models learn from labeled data."
-
-              invalid_answer:
-                value:
-                  question: "What is supervised learning?"
-                  answer: ""
-
       responses:
         "200":
           description: Evaluation result
@@ -142,12 +101,6 @@ paths:
                     type: string
                     minLength: 5
 
-              examples:
-                answer_review:
-                  value:
-                    score: 8
-                    feedback: "Good technical explanation with relevant examples."
-
         "422":
           description: Validation error
           content:
@@ -161,16 +114,3 @@ paths:
                     type: array
                     items:
                       type: object
-
-              examples:
-                invalid_answer:
-                  value:
-                    detail:
-                      - type: "string_too_short"
-                        loc:
-                          - body
-                          - answer
-                        msg: "String should have at least 10 characters"
-                        input: ""
-                        ctx:
-                          min_length: 10
